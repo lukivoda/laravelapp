@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\EditUserRequest;
 use App\Photo;
 use App\Role;
 use App\User;
@@ -51,9 +52,19 @@ class AdminUsersController extends Controller
     public function store(CreateUserRequest $request)
     {
 
-//return $request->all();
-       // site name attributi gi stavame bo niza $input
-       $input = $request->all();
+        if($request->password == ''){
+            $input =$request->except('password');
+        }else {
+            // site name attributi gi stavame bo niza $input
+            $input = $request->all();
+            //go kriptuvame password-ot dobien so Post metodata a skladiran vo input nizata
+            $input['password'] = bcrypt($request->password);
+        }
+
+
+
+
+
 
         //proveruvame dali sme dobile file name preku post
         if($file = $request->file('file') ){
@@ -69,8 +80,8 @@ class AdminUsersController extends Controller
             $input['photo_id'] = $photo->id;
         }
 
-        //go kriptuvame password-ot dobien so Post metodata a skladiran vo input nizata
-        $input['password'] = bcrypt($request->password);
+
+
 
         //formirame nov user
        User::create($input);
@@ -98,7 +109,16 @@ class AdminUsersController extends Controller
      */
     public function edit($id)
     {
-        return view('admin.users.edit');
+        $user  = User::findOrFail($id);
+
+        $roles = Role::lists('name','id')->all();/* ni vraca {
+                                               1: "admin",
+                                               2: "editor",
+                                               3: "author",
+                                               4: "subscriber"
+                                              }*/
+
+        return view('admin.users.edit',compact('user','roles'));
     }
 
     /**
@@ -108,9 +128,39 @@ class AdminUsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EditUserRequest $request, $id)
     {
-        //
+
+        if($request->password == ''){
+            $input = $request->except('password');
+        }else {
+            // site name attributi gi stavame bo niza $input
+            $input = $request->all();
+            //go kriptuvame password-ot dobien so Post metodata a skladiran vo input nizata
+            $input['password'] = bcrypt($request->password);
+        }
+
+
+
+        $user = User::findOrFail($id);
+
+
+        if($file = $request->file('file')) {
+            $name = time() . $file->getClientOriginalName();
+            $file->move('images',$name);
+            $photo  = Photo::create(['path'=>$name]);
+
+            $input['photo_id'] = $photo->id;
+
+
+        }
+
+
+       $user->update($input);
+
+        return redirect('admin/users');
+
+
     }
 
     /**
