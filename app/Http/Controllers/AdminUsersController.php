@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUserRequest;
+use App\Photo;
 use App\Role;
 use App\User;
 use Illuminate\Http\Request;
@@ -50,10 +51,31 @@ class AdminUsersController extends Controller
     public function store(CreateUserRequest $request)
     {
 
-//  return $request->all();
-        
-       User::create($request->all());
+//return $request->all();
+       // site name attributi gi stavame bo niza $input
+       $input = $request->all();
 
+        //proveruvame dali sme dobile file name preku post
+        if($file = $request->file('file') ){
+            //go zacuvuvame imeto na slikata + konkatinirame i vreme
+            $name = time() . $file->getClientOriginalName();
+            //ja premesuvame slikata vo images folder koj samse formira vo public folderot
+            $file->move('images',$name);
+
+            //kreirame slika i ja skladirame vo $photo objektot
+            $photo = Photo::create(['path' => $name]);
+
+            //na key:photo_id mu davame value na photo_id od tabelata
+            $input['photo_id'] = $photo->id;
+        }
+
+        //go kriptuvame password-ot dobien so Post metodata a skladiran vo input nizata
+        $input['password'] = bcrypt($request->password);
+
+        //formirame nov user
+       User::create($input);
+
+       // refresh na admin/user
      return redirect('admin/users');
     }
 
