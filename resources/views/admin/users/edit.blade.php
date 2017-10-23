@@ -12,7 +12,7 @@
 
     <div class="col-sm-9">
 
-   {{--konvertiranje na form-ot vo model i dodavanje na $user parametar--}}
+   {{--konvertiranje na form-ot vo model i dodavanje na $user parametar so sto gi imame vrednostite od tabelata users kako value--}}
     {!! Form::model($user,['method'=>'Patch','action'=>['AdminUsersController@update',$user->id],'files'=>true]) !!}
 
 
@@ -51,7 +51,7 @@
     <div class="form-group">
 
         {!! Form::label('password','Password: ') !!}
-        {!! Form::password('password',['class'=>'form-control']) !!}
+        {!! Form::password('password',['class'=>'form-control' ]) !!}
 
     </div>
 
@@ -66,10 +66,25 @@
 
     <div class="form-group">
 
-        {!! Form::submit('Update user',['class'=>'btn btn-primary']) !!}
+        {!! Form::submit('Update user',['class'=>'btn btn-primary','style'=>'float:left']) !!}
 
     </div>
 
     {!! Form::close() !!}
+
+
+       {{--forma za brisenje na useri-te so method delete--}}
+        {!! Form::open(['method'=>'Delete','action'=>['AdminUsersController@destroy',$user->id]]) !!}
+
+        <div class="form-group">
+
+            {!! Form::submit('Delete user',['class'=>'btn btn-danger','style'=>'margin-left:5%;']) !!}
+
+        </div>
+
+        {!! Form::close() !!}
+
+
+
     </div>
 @endsection

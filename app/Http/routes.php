@@ -24,7 +24,14 @@ Route::get('/admin',function(){
     return view('admin.index');
 });
 
-//route za controller-ot sozdaden so resource komanda
-Route::resource('admin/users','AdminUsersController');
+
+
+Route::group(['middleware'=>'admin'],function(){
+
+
+    //route za controller-ot sozdaden so resource komanda
+    Route::resource('admin/users','AdminUsersController');
+
+});
 
 

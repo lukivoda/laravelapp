@@ -10,6 +10,7 @@ use App\User;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Session;
 
 class AdminUsersController extends Controller
 {
@@ -66,11 +67,11 @@ class AdminUsersController extends Controller
 
 
 
-        //proveruvame dali sme dobile file name preku post
+        //proveruvame dali sme dobile file name preku post method-ot
         if($file = $request->file('file') ){
-            //go zacuvuvame imeto na slikata + konkatinirame i vreme
+            //go zacuvuvame imeto na slikata + konkatinirame i vreme za da imame edinecno ime na slikite
             $name = time() . $file->getClientOriginalName();
-            //ja premesuvame slikata vo images folder koj samse formira vo public folderot
+            //ja premesuvame slikata vo images folder koj sam se formira vo public folderot
             $file->move('images',$name);
 
             //kreirame slika i ja skladirame vo $photo objektot
@@ -85,6 +86,8 @@ class AdminUsersController extends Controller
 
         //formirame nov user
        User::create($input);
+        
+        Session::flash('added_user','User created');
 
        // refresh na admin/user
      return redirect('admin/users');
@@ -132,7 +135,10 @@ class AdminUsersController extends Controller
     {
 
         if($request->password == ''){
-            $input = $request->except('password');
+            $input = $request->all();
+            //$input = $request->except('password');
+            //ako ne vneseme password ostanuva istiot password
+            $input['password'] = User::findOrFail($id)->password;
         }else {
             // site name attributi gi stavame bo niza $input
             $input = $request->all();
@@ -144,12 +150,17 @@ class AdminUsersController extends Controller
 
         $user = User::findOrFail($id);
 
-
+        //proveruvame dali sme dobile file name preku post method-ot
         if($file = $request->file('file')) {
+            //go zacuvuvame imeto na slikata + konkatinirame i vreme za da imame edinecno ime na slikite
             $name = time() . $file->getClientOriginalName();
+            //ja premesuvame slikata vo images folder koj sam se formira vo public folderot
             $file->move('images',$name);
+
+            //kreirame slika i ja skladirame vo $photo objektot
             $photo  = Photo::create(['path'=>$name]);
 
+            //na key:photo_id mu davame value na photo_id od tabelata
             $input['photo_id'] = $photo->id;
 
 
@@ -157,6 +168,8 @@ class AdminUsersController extends Controller
 
 
        $user->update($input);
+
+    Session::flash('updated_user','User has been updated');
 
         return redirect('admin/users');
 
@@ -171,6 +184,17 @@ class AdminUsersController extends Controller
      */
     public function destroy($id)
     {
-        //
+       $user =User::findOrFail($id);
+
+        //briseme slikata od public/images(nema potreba da pisuvame /images/ oti go imame vo accessor vo Photo modelot)
+        unlink(public_path().$user->photo->path);
+        
+        $user->delete();
+
+
+    //formirame sesija so edna poraka koja isceznuva po edna egzekucija vo /admin/users
+        Session::flash('deleted_user','User is deleted');
+
+        return redirect('/admin/users');
     }
 }

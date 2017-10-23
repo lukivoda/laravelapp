@@ -21,7 +21,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password','remember_token'
     ];
 
     //one to many relation(reverse)
@@ -34,5 +34,17 @@ class User extends Authenticatable
     public function photo() {
 
         return $this->belongsTo('App\Photo');
+    }
+
+
+    public function is_admin(){
+       // ako user-ot e aktiven i e admin vracame true,a ako ne vracame false
+        if($this->is_active == 1 && $this->role->name == 'admin'){
+
+            return true;
+        }else {
+            
+            return false;
+        }
     }
 }
