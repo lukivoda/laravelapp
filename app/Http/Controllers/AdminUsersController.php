@@ -34,14 +34,17 @@ class AdminUsersController extends Controller
      */
     public function create()
     {
-        $roles = Role::lists('name','id')->all();/* ni vraca {
+
+
+        $roles =  Role::lists('name','id')->all();;/* ni vraca {
                                                1: "admin",
                                                2: "editor",
                                                3: "author",
                                                4: "subscriber"
                                               }*/
 
-       return view('admin.users.create',compact('roles'));
+
+        return view('admin.posts.create',compact('roles'));
     }
 
     /**

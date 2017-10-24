@@ -29,8 +29,13 @@ Route::get('/admin',function(){
 Route::group(['middleware'=>'admin'],function(){
 
 
-    //route za controller-ot sozdaden so resource komanda
+    //route za controller-ot sozdaden so resource komanda(admin/users ke bide dostapno samo za admin)
     Route::resource('admin/users','AdminUsersController');
+
+
+    //route za controller-ot sozdaden so resource komanda(admin/posts ke bide dostapno samo za admin)
+    Route::resource('admin/posts','AdminPostsController');
+
 
 });
 
