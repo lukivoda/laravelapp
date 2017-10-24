@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use App\Http\Requests\CreatePostRequest;
+use App\Http\Requests\EditPostRequest;
 use App\Photo;
 use App\Post;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class AdminPostsController extends Controller
 {
@@ -74,6 +76,8 @@ class AdminPostsController extends Controller
        //preku relacijata so user( so cel za da go zacuvame user_id vo posts tabelata) formirame nov posts($input parametarot e niza)
           $user->posts()->create($input);
 
+        $request->session()->flash('post_is_inserted','Post is inserted');
+
         return redirect('/admin/posts');
       
 
@@ -98,7 +102,11 @@ class AdminPostsController extends Controller
      */
     public function edit($id)
     {
-        return view('admin.posts.edit');
+        $post = Post::findOrFail($id);
+        
+        $categories = Category::lists('name','id')->all();
+        
+        return view('admin.posts.edit',compact('post','categories'));
     }
 
     /**
@@ -108,9 +116,31 @@ class AdminPostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EditPostRequest $request, $id)
     {
-        //
+
+        $input =$request->all();
+
+
+        $post = Post::findOrFail($id);
+        
+        if($file = $request->file('photo_id')){
+            $name =  time().$file->getClientOriginalName();
+
+            $file->move('images',$name);
+
+            $photo =  Photo::create(['path'=>$name]);
+
+            $input['photo_id'] = $photo->id;
+
+        }
+
+        //go naodjame prviot post na user-ot so konkreten id i mu pravime update
+        Auth::user()->posts()->whereId($id)->first()->update($input);
+
+        $request->session()->flash('updated_post','Post has been updated');
+
+        return redirect('admin/posts');
     }
 
     /**
@@ -119,8 +149,20 @@ class AdminPostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        //
+
+
+        $post =Post::find($id);
+
+        //prvin ja briseme slikata od public/images folderot ,pa duri potoa go briseme post-ot
+        unlink(public_path(). $post->photo->path);
+
+        $post->delete();
+
+
+        $request->session()->flash('deleted_post','Post is deleted');
+
+        return redirect('admin/posts');
     }
 }
