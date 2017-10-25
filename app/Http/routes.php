@@ -39,6 +39,10 @@ Route::group(['middleware'=>'admin'],function(){
     //route za controller-ot sozdaden so resource komanda(admin/categories bide dostapno samo za admin)
     Route::resource('admin/categories','AdminCategoriesController');
 
+    //route za controller-ot sozdaden so resource komanda(admin/media bide dostapno samo za admin) iako controller-ot AdminMediasController ne ni e napraven so resource
+    Route::resource('admin/media','AdminMediasController');
+    
+   
 
 });
 
