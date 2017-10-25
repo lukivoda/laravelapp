@@ -36,6 +36,9 @@ Route::group(['middleware'=>'admin'],function(){
     //route za controller-ot sozdaden so resource komanda(admin/posts ke bide dostapno samo za admin)
     Route::resource('admin/posts','AdminPostsController');
 
+    //route za controller-ot sozdaden so resource komanda(admin/categories bide dostapno samo za admin)
+    Route::resource('admin/categories','AdminCategoriesController');
+
 
 });
 

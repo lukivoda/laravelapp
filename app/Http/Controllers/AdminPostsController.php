@@ -11,7 +11,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Session\Session;
+//treba ovaa klasa session za flash(oti ima uste edna)
+use Illuminate\Support\Facades\Session;
 
 class AdminPostsController extends Controller
 {
