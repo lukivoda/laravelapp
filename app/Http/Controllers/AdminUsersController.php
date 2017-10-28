@@ -44,7 +44,8 @@ class AdminUsersController extends Controller
                                               }*/
 
 
-        return view('admin.posts.create',compact('roles'));
+      
+        return view('admin.users.create',compact('roles'));
     }
 
     /**

@@ -24,8 +24,10 @@
          <th>Id</th>
         <th>Author</th>
         <th>Category</th>
-        <th>Title</th>
+        <th>Title(click to update or delete)</th>
+        <th>Go to the post</th>
         <th>Body</th>
+        <th>View Comments</th>
         <th>Photo</th>
         <th>Created At</th>
         <th>Updated At</th>
@@ -40,8 +42,10 @@
         <td>{{$post->user->name}}</td>
         <td>{{($post->category)?$post->category->name:'Uncategorized'}}</td>
         <td><a href="{{route('admin.posts.edit',$post->id)}}">{{$post->title}}</a></td>
+        <td><a href="{{route('home.post',$post->id)}}">View</a></td>
         {{--go limitirame pregledot na content-ot od body na 20 karakteri--}}
         <td>{{str_limit($post->body,35)}}</td>
+        <td><a href="{{route('admin.comments.show',$post->id)}}">Comments</a></td>
         <td><img width="50" height="50" src="{{($post->photo)?$post->photo->path:'/images/placeholder.jpg'}}" alt=""></td>
         <td>{{$post->created_at->diffForHumans()}}</td>
         <td>{{$post->updated_at->diffForHumans()}}</td>

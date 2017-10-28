@@ -3,11 +3,10 @@
 @section('content')
 <h1>Create users</h1>
 
-
-
+@include('includes.formerrors')
 {!! Form::open(['method'=>'POST','action'=>'AdminUsersController@store','files'=>true]) !!}
 
-@include('includes.formerrors')
+
 
 
     <div class="form-group">

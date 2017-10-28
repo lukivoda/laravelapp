@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\CommentReply;
 use App\Http\Requests\CreatePostRequest;
 use App\Http\Requests\EditPostRequest;
 use App\Photo;
@@ -39,7 +40,7 @@ class AdminPostsController extends Controller
         
         $categories = Category::lists('name','id')->all();// se formira {'1'=>'Php','2'=>'Javascript','3'=>'Laravel','4'=>'React'}
 
-        
+
         return view('admin.posts.create',compact('categories'));
     }
 
@@ -166,4 +167,18 @@ class AdminPostsController extends Controller
 
         return redirect('admin/posts');
     }
+
+
+    public function post($id) {
+
+        $post   = Post::findOrFail($id);
+
+        $comments = $post->comments()->where('is_active',1)->get();
+
+        $comment_replies = CommentReply::where('is_active',1)->get();
+        
+
+        return view('post',compact('post','comments','comment_replies'));
+    }
+
 }

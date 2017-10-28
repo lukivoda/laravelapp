@@ -1,2 +1,12 @@
 
 /*# sourceMappingURL=app.css.map */
+
+#nested-comment {
+
+    margin-top:60px;
+}
+
+.nested-form {
+    display:none;
+
+}
